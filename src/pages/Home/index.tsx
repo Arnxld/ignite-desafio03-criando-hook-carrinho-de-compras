@@ -32,7 +32,14 @@ const Home = (): JSX.Element => {
   useEffect(() => {
     async function loadProducts() {
       await api.get('http://localhost:3333/products').then(response => {
-        setProducts(response.data)
+        const apiProducts = response.data
+
+        const formattedProducts = apiProducts.map((product: ProductFormatted) => {
+          product.priceFormatted = formatPrice(product.price)
+          return product
+        })
+      
+        setProducts(formattedProducts)
       })
     }
 
@@ -48,9 +55,9 @@ const Home = (): JSX.Element => {
       {products.map(product => {
         return (
         <li>
-          <img src="https://rocketseat-cdn.s3-sa-east-1.amazonaws.com/modulo-redux/tenis1.jpg" alt="Tênis de Caminhada Leve Confortável" />
-          <strong>Tênis de Caminhada Leve Confortável</strong>
-          <span>R$ 179,90</span>
+          <img src={product.image} alt={product.title} />
+          <strong>{product.title}</strong>
+          <span>{product.priceFormatted}</span>
           <button
             type="button"
             data-testid="add-product-button"
